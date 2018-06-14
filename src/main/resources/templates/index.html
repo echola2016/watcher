@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+
+    <title>监控平台</title>
+    <!--<script src="//cdn.bootcss.com/jquery/3.2.0/jquery.js"></script>-->
+    <script src="../bootstrap-3.3.7/js/jquery-3.3.1.min.js"></script>
+    <style>
+        .panel.panel-primary {
+            width: 49%;
+            float: left;
+            margin-right: 3px;
+            background-color: #333!important;
+        }
+        .jumbotron p {
+            margin-bottom: 10px;
+            font-size: 5px;
+            font-weight: 200;
+        }
+        p.s {
+            color: #3c763d;
+        }
+        p.f {
+            color: #92211e;
+        }
+        .panel-heading {
+            background-color: black!important;
+        }
+        .jumbotron {
+            padding-top: 30px;
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+            color: inherit;
+            background-color: #333!important;
+        }
+        .nav {
+            padding-left: 0;
+            margin-bottom: 0;
+            list-style: none;
+            background: black!important;
+        }
+    </style>
+    <script src="../bootstrap-3.3.7/js/bootstrap.js"></script>
+
+
+
+</head>
+<body>
+<ul class="nav nav-pills">
+    <li role="presentation"><a href="#">AIIS监控</a></li>
+</ul>
+<div class="panel panel-primary">
+    <div class="panel-heading">重要事件</div>
+    <div class="panel-body"  id="msgbox">
+
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">实时连接状况</div>
+    <div class="panel-body"  id="pingbox">
+
+    </div>
+</div>
+<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="../bootstrap-3.3.7/css/bootstrap.css">
+<!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+<link rel="stylesheet" href="../bootstrap-3.3.7/css/bootstrap-theme.css">
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+
+<script>
+    function loadData(){
+        var url="loadData";
+        $.get(url,function(result){
+            if(result.code==0){
+                $("#pingbox").empty();
+                $(result.data).each(function(d){
+                    var str=this.createAt;
+                    if(this.znode){
+                        str = str+" ["+this.znode+"]  "
+                    }
+                    str = str+ this.msg;
+                    if(this.color==0){
+                        str = "<div class='alert alert-success' role='alert'>"+str+"</div>"
+                    }else if(this.color==1){
+                         str = "<div class='alert alert-danger' role='alert'>"+str+"</div>"
+                    }else if(this.color==3){
+                        str = "<p class='s'>"+str+"</p>";
+                    }else if(this.color==4){
+                        str = "<p class='f'>"+str+"</p>";
+                    }
+
+                    $("#pingbox").append(str);
+                })
+            }
+        })
+    }
+    function loadServiceData(){
+        var url="loadServiceData";
+        $.get(url,function(result){
+            if(result.code==0){
+                $("#msgbox").empty();
+                $(result.data).each(function(d){
+                    var str=this.createAt;
+                    if(this.znode){
+                        str = str+" ["+this.znode+"]  "
+                    }
+                    str = str+ this.msg;
+                    if(this.color==0){
+                        str = "<div class='alert alert-success' role='alert'>"+str+"</div>"
+                    }else if(this.color==1){
+                        str = "<div class='alert alert-danger' role='alert'>"+str+"</div>"
+                    }
+
+                    $("#msgbox").append(str);
+                })
+            }
+        })
+    }
+    $(function () {
+        loadData();
+        loadServiceData()
+        setInterval("loadData()",3000);
+        setInterval("loadServiceData()",3000);
+    })
+
+
+</script>
+
+</body>
+</html>
